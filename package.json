@@ -1,0 +1,35 @@
+{
+  "name": "nox",
+  "version": "1.0.0",
+  "description": "This is a rest client for react",
+  "main": "dist/main.js",
+  "files": [
+    "dist"
+  ],
+  "author": "Matthieu Rondeau <matt@matthieurondeau.fr>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.49",
+    "@babel/core": "^7.0.0-beta.49",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.49",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.49",
+    "@babel/preset-env": "^7.0.0-beta.49",
+    "@babel/preset-react": "^7.0.0-beta.49",
+    "babel-eslint": "^8.2.3",
+    "babel-loader": "^8.0.0-beta",
+    "clean-webpack-plugin": "^0.1.19",
+    "react": "^16.4.0",
+    "standard": "^11.0.1",
+    "standard-loader": "^6.0.1",
+    "webpack": "^4.10.2",
+    "webpack-cli": "^3.0.0",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.49",
+    "axios": "^0.18.0",
+    "hoist-non-react-statics": "^2.5.0",
+    "joi": "^13.3.0",
+    "lodash": "^4.17.10"
+  }
+}
