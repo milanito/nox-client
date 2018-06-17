@@ -1,3 +1,4 @@
+import hash from 'object-hash'
 import { omit, isEqual, isFunction } from 'lodash'
 
 export const isDirectQuery = ({ method }) =>
@@ -15,6 +16,9 @@ const transformPath = ({ path }, props) => {
 }
 
 export const transformOptions = (options, props) => ({
-  ...omit(options, OMITTED_FIELDS),
-  url: transformPath(options, props)
+  url: transformPath(options, props),
+  cache: true,
+  ...omit(options, OMITTED_FIELDS)
 })
+
+export const hashOptions = options => hash(options)

@@ -80,6 +80,14 @@ export default noxConnect({
 })(Display)
 ```
 
+#### Available options
+
+The available options are :
+
+- `method` : The HTTP Verb to use, case unsensitive
+- `path` : The path to request
+- `cache` : A boolean to indicate to use cache or not (default to true)
+
 ### Accessing the client directly
 
 To access the REST client directly, you can wrap your component with the `withNoxClient` function, which will make the client accessible in the component's props

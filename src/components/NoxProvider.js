@@ -1,5 +1,5 @@
-import { validate } from 'joi'
 import React, { Component, Children } from 'react'
+import { validate } from 'joi'
 
 import createClient from '../config/client'
 import { providerOptionsSchema } from '../config/schemas'
@@ -9,32 +9,28 @@ export default (Provider) => {
     constructor (props) {
       super(props)
 
-      this.state = { error: null, options: null }
-    }
+      const { options } = props
+      const { error, value } = validate(options, providerOptionsSchema)
 
-    async componentDidMount () {
-      const { options } = this.props
-
-      try {
-        const validatedOptions = await validate(options, providerOptionsSchema)
-
-        return this.setState({ options: validatedOptions })
-      } catch (error) {
-        console.error(error)
-        return this.setState({ error })
+      if (error) {
+        this.state = { error, client: null }
+      } else {
+        this.state = { error: null, client: createClient(value) }
       }
     }
 
     render () {
       const { children } = this.props
-      const { options, error } = this.state
+      const { client, error } = this.state
 
-      if (error || !options) {
+      if (error || !client) {
+        // TODO Make real logger
+        console.log('Something wrong happened')
         return Children.only(children)
       }
 
       return (
-        <Provider value={{ client: createClient(options) }}>
+        <Provider value={{ client }}>
           {Children.only(children)}
         </Provider>
       )

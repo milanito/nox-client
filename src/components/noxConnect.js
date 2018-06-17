@@ -1,10 +1,9 @@
 import hoistStatics from 'hoist-non-react-statics'
+import PubSub from 'pubsub-js'
 import React, { Component, Children, cloneElement } from 'react'
-import { validate } from 'joi'
-import { isEqual, floor, divide, multiply, pick, isNull, merge, omit } from 'lodash'
+import { isEqual, pick, merge, omit } from 'lodash'
 
-import { connectOptionsSchema } from '../config/schemas'
-import { isDirectQuery, transformOptions } from '../utils'
+import { isDirectQuery, hashOptions } from '../utils'
 
 const OMITTED_FIELDS = ['children', 'client', 'options']
 
@@ -14,67 +13,65 @@ class NoxWrapperComponent extends Component {
 
     this.state = {
       canMakeRequest: false,
-      loading: true,
+      loading: false,
+      cached: false,
       data: null,
-      error: null,
-      percent: 0
+      error: null
     }
-  }
-
-  componentDidUpdate (nextProps, prevState) {
-    const { client, options } = nextProps
-
-    if (client && options && isDirectQuery(options)) {
-      return { canMakeRequest: true }
-    }
-
-    if (client && options && !isDirectQuery(options)) {
-      return { loading: false }
-    }
-
-    return null
+    this.subscriber = this.subscriber.bind(this)
   }
 
   shouldComponentUpdate (nextProps, nextState) {
-    const { loading, data, percent } = this.state
+    const { loading, data, cached } = this.state
 
     return !(isEqual(loading, nextState.loading) && isEqual(data, nextState.data) &&
-      isEqual(percent, nextState.percent)) &&
-      (isEqual(nextState.percent, 100) && !isNull(nextState.data))
+      isEqual(cached, nextState.cached))
   }
 
-  async componentDidMount () {
-    const { canMakeRequest } = this.state
+  componentDidMount () {
+    const { options } = this.props
 
-    if (canMakeRequest) {
-      await this.makeRequest()
+    // Start the pubsub engine
+    this.hash = hashOptions(options)
+    this.token = PubSub.subscribe(this.hash, this.subscriber)
+
+    if (options && isDirectQuery(options)) {
+      return this.makeRequest()
     }
   }
 
-  async makeRequest () {
+  componentWillUnmount () {
+    PubSub.unsubscribe(this.token)
+  }
+
+  subscriber (msg, { type, data }) {
+    console.log(type)
+    switch (type) {
+      case 'onStart':
+        return this.setState({ loading: true })
+      case 'onCacheDone':
+        return this.setState({ cached: true, data })
+      case 'onDownloadDone':
+        return this.setState({ loading: false, data })
+      case 'onError':
+        const { error } = data
+        return this.setState({ loading: false, error })
+      default:
+        return this.setState({ loading: false, error: new Error('Wrong type') })
+    }
+  }
+
+  makeRequest () {
     const { client, options } = this.props
+    const { hash } = this
 
-    try {
-      const validatedOptions = await validate(options, connectOptionsSchema)
-      const { data } = await client.request({
-        ...transformOptions(validatedOptions, this.props),
-        onDownloadProgress: ({ loaded, total }) =>
-          this.setState({
-            percent: floor(divide(multiply(loaded, 100), total))
-          })
-      })
-
-      this.setState({ loading: false, data })
-    } catch (error) {
-      console.error(error)
-      this.setState({ loading: false, error })
-    }
+    return client.request(options, hash, omit(this.props, ['client', 'options']))
   }
 
   render () {
     const { children } = this.props
     const { canMakeRequest } = this.state
-    const noxData = pick(this.state, ['loading', 'percent', 'data'])
+    const noxData = pick(this.state, ['loading', 'data'])
 
     return cloneElement(Children.only(children),
       merge(omit(this.props, OMITTED_FIELDS), {
