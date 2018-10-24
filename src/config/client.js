@@ -6,6 +6,9 @@ import { validate } from 'joi'
 import { connectOptionsSchema } from './schemas'
 import { transformOptions } from '../utils'
 
+/**
+ * This class represents a nox client
+ */
 class NoxClient {
   constructor ({ baseURL, timeout, headers }) {
     this.cache = new Cache()
@@ -15,6 +18,35 @@ class NoxClient {
   }
 
   async request (options, hash, props) {
+    try {
+      const validatedOptions = await validate(options, connectOptionsSchema)
+      const fullOptions = transformOptions(validatedOptions, props)
+
+      if (fullOptions.subscribe) {
+        PubSub.publish(hash, {
+          type: 'onStart'
+        })
+      }
+
+      const { data } = await this.client.request(fullOptions)
+
+      if (fullOptions.subscribe) {
+        return PubSub.publish(hash, {
+          type: 'onRequestDone',
+          data
+        })
+      }
+
+      return data
+    } catch (error) {
+      PubSub.publish(hash, {
+        type: 'onError',
+        data: { error }
+      })
+    }
+  }
+
+  async query (options, hash, props) {
     try {
       const validatedOptions = await validate(options, connectOptionsSchema)
       const fullOptions = transformOptions(validatedOptions, props)
@@ -44,7 +76,6 @@ class NoxClient {
         this.cache.put(hash, data)
       }
     } catch (error) {
-      console.error(error)
       PubSub.publish(hash, {
         type: 'onError',
         data: { error }

@@ -17,5 +17,6 @@ export const connectOptionsSchema = Joi.object().keys({
   path: Joi.alternatives().try(Joi.string().uri({
     allowRelative: true,
     relativeOnly: true
-  }), Joi.func()).required()
+  }), Joi.func()).required(),
+  data: Joi.object()
 })
