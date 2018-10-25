@@ -13,16 +13,16 @@ module.exports = {
   externals: [nodeExternals()],
   module: {
     rules: [{
-      // set up standard-loader as a preloader
-      enforce: 'pre',
-      test: /\.js$/,
-      loader: 'standard-loader',
-      exclude: /(node_modules|bower_components)/,
-      options: {
-        // config options to be passed through to standard e.g.
-        parser: 'babel-eslint'
-      }
-    }, {
+      // // set up standard-loader as a preloader
+      // enforce: 'pre',
+      // test: /\.js$/,
+      // loader: 'standard-loader',
+      // exclude: /(node_modules|bower_components)/,
+      // options: {
+      //   // config options to be passed through to standard e.g.
+      //   parser: 'babel-eslint'
+      // }
+    // }, {
       test: /\.js$/,
       include: path.join(__dirname, 'src'),
       exclude: /(node_modules|bower_components)/,

@@ -1,6 +1,6 @@
 import hoistStatics from 'hoist-non-react-statics'
 import PubSub from 'pubsub-js'
-import { isEqual } from 'lodash'
+import { isEqual, identity, get } from 'lodash'
 import { compose, withState, withHandlers, lifecycle } from 'recompose'
 import React, { Children, cloneElement } from 'react'
 
@@ -35,7 +35,7 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
       }
     },
     makeRequest: ({ client, options, hash, ...rest }) => () =>
-      client.query(options, hash, { ...rest }),
+      get(client, 'query', identity)(options, hash, { ...rest }),
     bark: ({ canMakeRequest, client, options, hash, ...rest }) => (opts) =>
       canMakeRequest
         ? console.log('Whouf')
@@ -75,11 +75,11 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
 export default (Consumer) => (options) => (WrappedComponent) => {
   const NoxConnect = (props) => (
     <Consumer>
-      {({ client }) => (
-        <NoxWrapperComponent client={client} options={options} {...props}>
-          <WrappedComponent />
-        </NoxWrapperComponent>
-      )}
+    {({ client }) => (
+      <NoxWrapperComponent client={client} options={options} {...props}>
+        <WrappedComponent />
+      </NoxWrapperComponent>
+    )}
     </Consumer>
   )
 

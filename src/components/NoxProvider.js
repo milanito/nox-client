@@ -13,7 +13,7 @@ import { providerOptionsSchema } from '../config/schemas'
  * @returns {Object} a react HOC
  */
 export default (Provider) => compose(withState('error', 'modifyError', null),
-  withState('client', 'null', 'modifyClient'),
+  withState('client', 'modifyClient', null),
   branch(({ error, client }) => error || !client, renderComponent(({ children }) => (
     Children.only(children)
   ))),
