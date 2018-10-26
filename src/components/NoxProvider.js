@@ -14,9 +14,6 @@ import { providerOptionsSchema } from '../config/schemas'
  */
 export default (Provider) => compose(withState('error', 'modifyError', null),
   withState('client', 'modifyClient', null),
-  branch(({ error, client }) => error || !client, renderComponent(({ children }) => (
-    Children.only(children)
-  ))),
   lifecycle({
     componentDidMount () {
       const { options, modifyError, modifyClient } = this.props
@@ -28,7 +25,10 @@ export default (Provider) => compose(withState('error', 'modifyError', null),
         modifyClient(createClient(value))
       }
     }
-  })
+  }),
+  branch(({ error, client }) => error || !client, renderComponent(({ children }) => (
+    Children.only(children)
+  )))
 )(({ client, children }) => (
   <Provider value={{ client }}>{Children.only(children)}</Provider>
 ))
