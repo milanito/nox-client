@@ -23,8 +23,7 @@ class NoxClient {
 
   async request (options, hash, props) {
     try {
-      const validatedOptions = await validate({ ...BASE_OPTIONS, ...options },
-        connectOptionsSchema)
+      const validatedOptions = await validate(options, connectOptionsSchema)
       const fullOptions = transformOptions(validatedOptions, props)
 
       if (fullOptions.subscribe) {
