@@ -3,8 +3,12 @@ import PubSub from 'pubsub-js'
 import { Cache } from 'memory-cache'
 import { validate } from 'joi'
 
-import { connectOptionsSchema } from './schemas'
 import { transformOptions } from '../utils'
+import { connectOptionsSchema } from './schemas'
+
+const BASE_OPTIONS = {
+  subscribe :true
+}
 
 /**
  * This class represents a nox client
@@ -19,7 +23,8 @@ class NoxClient {
 
   async request (options, hash, props) {
     try {
-      const validatedOptions = await validate(options, connectOptionsSchema)
+      const validatedOptions = await validate({ ...BASE_OPTIONS, ...options },
+        connectOptionsSchema)
       const fullOptions = transformOptions(validatedOptions, props)
 
       if (fullOptions.subscribe) {

@@ -7,18 +7,18 @@ import React, { Children, cloneElement } from 'react'
 import { isDirectQuery, hashOptions } from '../utils'
 
 const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRequest', false),
-  withState('noxLoading', 'modifyLoading', false),
-  withState('noxCached', 'modifyCached', false),
-  withState('noxData', 'modifyData', null),
-  withState('noxError', 'modifyError', null),
-  withState('noxToken', 'modifyToken', null),
+  withState('noxLoading', 'modifyNoxLoading', false),
+  withState('noxCached', 'modifyNoxCached', false),
+  withState('noxData', 'modifyNoxData', null),
+  withState('noxError', 'modifyNoxError', null),
+  withState('noxToken', 'modifyNoxToken', null),
   withHandlers({
-    updateNoxCanMakeRequest: ({ modifyCanMakeRequest }) => canMakeRequest => modifyCanMakeRequest(canMakeRequest),
-    updateNoxLoading: ({ modifyLoading }) => loading => modifyLoading(loading),
-    updateNoxCached: ({ modifyCached }) => cached => modifyCached(cached),
-    updateNoxData: ({ modifyData }) => data => modifyData(data),
-    updateNoxError: ({ modifyError }) => error => modifyError(error),
-    updateNoxToken: ({ modifyToken }) => token => modifyToken(token),
+    updateNoxCanMakeRequest: ({ modifyNoxCanMakeRequest }) => canMakeRequest => modifyNoxCanMakeRequest(canMakeRequest),
+    updateNoxLoading: ({ modifyNoxLoading }) => loading => modifyNoxLoading(loading),
+    updateNoxCached: ({ modifyNoxCached }) => cached => modifyNoxCached(cached),
+    updateNoxData: ({ modifyNoxData }) => data => modifyNoxData(data),
+    updateNoxError: ({ modifyNoxError }) => error => modifyNoxError(error),
+    updateNoxToken: ({ modifyNoxToken }) => token => modifyNoxToken(token),
   }),
   withProps(({ options }) => ({
     hash: hashOptions(options)
@@ -53,10 +53,10 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
   }),
   lifecycle({
     shouldComponentUpdate (nextProps) {
-      const { loading, data, cached } = this.props
+      const { noxLoading, noxData, noxCached, noxError } = this.props
 
-      return !(isEqual(loading, nextProps.loading) && isEqual(data, nextProps.data) &&
-        isEqual(cached, nextProps.cached))
+      return !(isEqual(noxLoading, nextProps.noxLoading) && isEqual(noxData, nextProps.noxData) &&
+        isEqual(noxCached, nextProps.noxCached) && isEqual(noxError, nextProps.noxError))
     },
     componentDidMount () {
       const { options, makeRequest, subscriber, updateNoxToken, client, hash } = this.props
