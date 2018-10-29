@@ -1,6 +1,8 @@
 import React, { Children } from 'react'
 import { validate } from 'joi'
-import { compose, withState, lifecycle, branch, renderComponent } from 'recompose'
+import {
+  compose, withState, lifecycle, branch, renderComponent, withHandlers
+} from 'recompose'
 
 import createClient from '../config/client'
 import { providerOptionsSchema } from '../config/schemas'
@@ -14,16 +16,20 @@ import { providerOptionsSchema } from '../config/schemas'
  */
 export default (Provider) => compose(withState('error', 'modifyError', null),
   withState('client', 'modifyClient', null),
+  withHandlers({
+    updateError: ({ modifyError }) => error => modifyError(error),
+    updateClient: ({ modifyClient }) => client => modifyClient(client)
+  }),
   lifecycle({
     componentDidMount () {
-      const { options, modifyError, modifyClient } = this.props
+      const { options, updateError, updateClient } = this.props
       const { error, value } = validate(options, providerOptionsSchema)
 
       if (error) {
-        modifyError(error)
-      } else {
-        modifyClient(createClient(value))
+        return updateError(error)
       }
+
+      return updateClient(createClient(value))
     }
   }),
   branch(({ error, client }) => error || !client, renderComponent(({ children }) => (

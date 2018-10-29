@@ -1,41 +1,51 @@
 import hoistStatics from 'hoist-non-react-statics'
 import PubSub from 'pubsub-js'
 import { isEqual, identity, get } from 'lodash'
-import { compose, withState, withHandlers, lifecycle } from 'recompose'
+import { compose, withState, withHandlers, lifecycle, withProps } from 'recompose'
 import React, { Children, cloneElement } from 'react'
 
 import { isDirectQuery, hashOptions } from '../utils'
 
 const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRequest', false),
-  withState('loading', 'modifyLoading', false),
-  withState('cached', 'modifyCached', false),
-  withState('data', 'modifyData', null),
-  withState('error', 'modifyError', null),
-  withState('token', 'modifyToken', null),
-  withState('hash', 'modifyHash', null),
+  withState('noxLoading', 'modifyLoading', false),
+  withState('noxCached', 'modifyCached', false),
+  withState('noxData', 'modifyData', null),
+  withState('noxError', 'modifyError', null),
+  withState('noxToken', 'modifyToken', null),
   withHandlers({
-    subscriber: ({ modifyLoading, modifyData, modifyError, modifyCached }) => (msg, { type, data }) => {
+    updateNoxCanMakeRequest: ({ modifyCanMakeRequest }) => canMakeRequest => modifyCanMakeRequest(canMakeRequest),
+    updateNoxLoading: ({ modifyLoading }) => loading => modifyLoading(loading),
+    updateNoxCached: ({ modifyCached }) => cached => modifyCached(cached),
+    updateNoxData: ({ modifyData }) => data => modifyData(data),
+    updateNoxError: ({ modifyError }) => error => modifyError(error),
+    updateNoxToken: ({ modifyToken }) => token => modifyToken(token),
+  }),
+  withProps(({ options }) => ({
+    hash: hashOptions(options)
+  })),
+  withHandlers({
+    subscriber: ({ updateNoxLoading, updateNoxData, updateNoxError, updateNoxCached }) => (msg, { type, data }) => {
       switch (type) {
         case 'onStart':
-          return modifyLoading(true)
+          return updateNoxLoading(true)
         case 'onCacheDone':
-          modifyCached(true)
-          return modifyData(data)
+          updateNoxCached(true)
+          return updateNoxData(data)
         case 'onDownloadDone':
         case 'onRequestDone':
-          modifyLoading(false)
-          return modifyData(data)
+          updateNoxLoading(false)
+          return updateNoxData(data)
         case 'onError':
           const { error } = data
-          modifyLoading(false)
-          return modifyError(error)
+          updateNoxLoading(false)
+          return updateNoxError(error)
         default:
-          modifyLoading(false)
-          return modifyError(new Error('Wrong type'))
+          updateNoxLoading(false)
+          return updateNoxError(new Error('Wrong type'))
       }
     },
-    makeRequest: ({ client, options, hash, ...rest }) => () =>
-      get(client, 'query', identity)(options, hash, { ...rest }),
+    makeRequest: ({ client, options, hash, ...rest }) => async () =>
+      client.query(options, hash, { ...rest }),
     bark: ({ canMakeRequest, client, options, hash, ...rest }) => (opts) =>
       canMakeRequest
         ? console.log('Whouf')
@@ -49,25 +59,23 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
         isEqual(cached, nextProps.cached))
     },
     componentDidMount () {
-      const { options, makeRequest, subscriber, modifyHash, modifyToken } = this.props
+      const { options, makeRequest, subscriber, updateNoxToken, client, hash } = this.props
 
       // Start the pubsub engine
-      const hash = hashOptions(options)
-      modifyHash(hash)
-      modifyToken(PubSub.subscribe(hash, subscriber.bind(this)))
+      updateNoxToken(PubSub.subscribe(hash, subscriber.bind(this)))
 
-      if (options && isDirectQuery(options)) {
-        return makeRequest()
+      if (options && isDirectQuery(options) && client) {
+        return requestAnimationFrame(() => makeRequest())
       }
     },
     componentWillUnmount () {
-      PubSub.unsubscribe(this.props.token)
+      PubSub.unsubscribe(this.props.noxToken)
     }
   })
-)(({ children, loading, data, error, cached, bark, ...rest }) => (
+)(({ children, noxLoading, noxData, noxError, noxCached, bark, ...rest }) => (
   cloneElement(Children.only(children), {
     ...rest,
-    noxData: { loading, data },
+    noxData: { loading: noxLoading, data: noxData, error: noxError, cached: noxCached },
     bark
   }))
 )

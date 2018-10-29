@@ -1,6 +1,6 @@
 {
-  "name": "nox",
-  "version": "0.0.1",
+  "name": "nox-client",
+  "version": "0.0.2",
   "description": "This is a rest client for react",
   "main": "dist/main.js",
   "files": [
@@ -9,7 +9,9 @@
   "author": "Matthieu Rondeau <matt@matthieurondeau.fr>",
   "license": "MIT",
   "scripts": {
-    "lint": "./node_modules/.bin/standard \"src/**/*.{js,jsx}\""
+    "lint": "./node_modules/.bin/standard \"src/**/*.{js,jsx}\"",
+    "build": "node_modules/webpack/bin/webpack.js --config webpack.config.js  --hot --colors",
+    "prepublish": "node_modules/webpack/bin/webpack.js --config webpack.config.js  --hot --colors"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.49",
