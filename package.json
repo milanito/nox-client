@@ -13,6 +13,11 @@
     "build": "node_modules/webpack/bin/webpack.js --config webpack.config.js  --hot --colors",
     "prepublish": "node_modules/webpack/bin/webpack.js --config webpack.config.js  --hot --colors"
   },
+  "jest": {
+    "transform": {
+      "^.+\\.js?$": "babel-jest"
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.49",
     "@babel/core": "^7.0.0-beta.49",
@@ -21,6 +26,7 @@
     "@babel/preset-env": "^7.0.0-beta.49",
     "@babel/preset-react": "^7.0.0-beta.49",
     "babel-eslint": "^8.2.3",
+    "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.0-beta",
     "clean-webpack-plugin": "^0.1.19",
     "react": "^16.4.0",
@@ -33,7 +39,9 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.49",
     "axios": "^0.18.0",
+    "enzyme": "^3.7.0",
     "hoist-non-react-statics": "^2.5.0",
+    "jest": "^23.6.0",
     "joi": "^13.3.0",
     "lodash": "^4.17.10",
     "memory-cache": "^0.2.0",
