@@ -27,21 +27,24 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
     subscriber: ({ updateNoxLoading, updateNoxData, updateNoxError, updateNoxCached }) => (msg, { type, data }) => {
       switch (type) {
         case 'onStart':
+          updateNoxError(null)
           return updateNoxLoading(true)
         case 'onCacheDone':
-          updateNoxCached(true)
-          return updateNoxData(data)
+          updateNoxError(null)
+          updateNoxData(data)
+          return updateNoxCached(true)
         case 'onDownloadDone':
         case 'onRequestDone':
-          updateNoxLoading(false)
-          return updateNoxData(data)
+          updateNoxError(null)
+          updateNoxData(data)
+          return updateNoxLoading(false)
         case 'onError':
           const { error } = data
-          updateNoxLoading(false)
-          return updateNoxError(error)
+          updateNoxError(error)
+          return updateNoxLoading(false)
         default:
-          updateNoxLoading(false)
-          return updateNoxError(new Error('Wrong type'))
+          updateNoxError(new Error('Wrong type'))
+          return updateNoxLoading(false)
       }
     },
     makeRequest: ({ client, options, hash, ...rest }) => async () =>

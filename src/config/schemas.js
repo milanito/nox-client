@@ -18,5 +18,6 @@ export const connectOptionsSchema = Joi.object().keys({
     allowRelative: true,
     relativeOnly: true
   }), Joi.func()).required(),
-  data: Joi.object()
+  data: Joi.object(),
+  subscribe: Joi.boolean()
 })

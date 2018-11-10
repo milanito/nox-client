@@ -6,10 +6,6 @@ import { validate } from 'joi'
 import { transformOptions } from '../utils'
 import { connectOptionsSchema } from './schemas'
 
-const BASE_OPTIONS = {
-  subscribe :true
-}
-
 /**
  * This class represents a nox client
  */
@@ -26,11 +22,9 @@ class NoxClient {
       const validatedOptions = await validate(options, connectOptionsSchema)
       const fullOptions = transformOptions(validatedOptions, props)
 
-      if (fullOptions.subscribe) {
-        PubSub.publish(hash, {
-          type: 'onStart'
-        })
-      }
+      PubSub.publish(hash, {
+        type: 'onStart'
+      })
 
       const { data } = await this.client.request(fullOptions)
 
@@ -40,6 +34,7 @@ class NoxClient {
           data
         })
       }
+
 
       return data
     } catch (error) {
