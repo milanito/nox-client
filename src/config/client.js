@@ -1,16 +1,18 @@
 import axios from 'axios'
 import PubSub from 'pubsub-js'
+import { get } from 'lodash'
 import { Cache } from 'memory-cache'
 import { validate } from 'joi'
 
-import { transformOptions } from '../utils'
 import { connectOptionsSchema } from './schemas'
+import { transformOptions, getOptions } from '../utils'
 
 /**
  * This class represents a nox client
  */
 class NoxClient {
-  constructor ({ baseURL, timeout, headers }) {
+  constructor ({ baseURL, timeout, headers, cacheTimeout = 600000 }) {
+    this.cacheTimeout = cacheTimeout
     this.cache = new Cache()
     this.client = axios.create({
       baseURL, timeout, headers
@@ -19,7 +21,8 @@ class NoxClient {
 
   async request (options, hash, props) {
     try {
-      const validatedOptions = await validate(options, connectOptionsSchema)
+      const validatedOptions = await validate(getOptions(options, props),
+        connectOptionsSchema)
       const fullOptions = transformOptions(validatedOptions, props)
 
       PubSub.publish(hash, {
@@ -35,7 +38,6 @@ class NoxClient {
         })
       }
 
-
       return data
     } catch (error) {
       PubSub.publish(hash, {
@@ -47,7 +49,8 @@ class NoxClient {
 
   async query (options, hash, props) {
     try {
-      const validatedOptions = await validate(options, connectOptionsSchema)
+      const validatedOptions = await validate(getOptions(options, props),
+        connectOptionsSchema)
       const fullOptions = transformOptions(validatedOptions, props)
 
       if (fullOptions.cache) {
@@ -72,7 +75,7 @@ class NoxClient {
       })
 
       if (fullOptions.cache) {
-        this.cache.put(hash, data)
+        this.cache.put(hash, data, get(fullOptions, 'cacheTimeout', this.cacheTimeout))
       }
     } catch (error) {
       PubSub.publish(hash, {
@@ -83,4 +86,4 @@ class NoxClient {
   }
 }
 
-export default (options) => new NoxClient(options)
+export default options => new NoxClient(options)

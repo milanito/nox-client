@@ -19,5 +19,8 @@ export const connectOptionsSchema = Joi.object().keys({
     relativeOnly: true
   }), Joi.func()).required(),
   data: Joi.object(),
-  subscribe: Joi.boolean()
+  subscribe: Joi.boolean(),
+  headers: Joi.object(),
+  pollInterval: Joi.number(),
+  cacheTimeout: Joi.number()
 })

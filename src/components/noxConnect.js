@@ -1,10 +1,11 @@
 import hoistStatics from 'hoist-non-react-statics'
 import PubSub from 'pubsub-js'
-import { isEqual, identity, get } from 'lodash'
+import { isEqual, omit } from 'lodash'
 import { compose, withState, withHandlers, lifecycle, withProps } from 'recompose'
 import React, { Children, cloneElement } from 'react'
 
-import { isDirectQuery, hashOptions } from '../utils'
+import { OMITTED_NOX_FIELDS } from '../config/fields'
+import { isDirectQuery, hashOptions, getOptions } from '../utils'
 
 const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRequest', false),
   withState('noxLoading', 'modifyNoxLoading', false),
@@ -12,6 +13,7 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
   withState('noxData', 'modifyNoxData', null),
   withState('noxError', 'modifyNoxError', null),
   withState('noxToken', 'modifyNoxToken', null),
+  withState('noxPollInterval', 'modifyNoxPollInterval', null),
   withHandlers({
     updateNoxCanMakeRequest: ({ modifyNoxCanMakeRequest }) => canMakeRequest => modifyNoxCanMakeRequest(canMakeRequest),
     updateNoxLoading: ({ modifyNoxLoading }) => loading => modifyNoxLoading(loading),
@@ -19,9 +21,10 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
     updateNoxData: ({ modifyNoxData }) => data => modifyNoxData(data),
     updateNoxError: ({ modifyNoxError }) => error => modifyNoxError(error),
     updateNoxToken: ({ modifyNoxToken }) => token => modifyNoxToken(token),
+    updateNoxPollInterval: ({ modifyNoxPollInterval }) => interval => modifyNoxPollInterval(interval)
   }),
-  withProps(({ options }) => ({
-    hash: hashOptions(options)
+  withProps(({ options, ...rest }) => ({
+    hash: hashOptions(getOptions(options, rest))
   })),
   withHandlers({
     subscriber: ({ updateNoxLoading, updateNoxData, updateNoxError, updateNoxCached }) => (msg, { type, data }) => {
@@ -62,22 +65,31 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
         isEqual(noxCached, nextProps.noxCached) && isEqual(noxError, nextProps.noxError))
     },
     componentDidMount () {
-      const { options, makeRequest, subscriber, updateNoxToken, client, hash } = this.props
+      const {
+        options, makeRequest, subscriber, updateNoxToken, updateNoxPollInterval, client, hash
+      } = this.props
 
       // Start the pubsub engine
       updateNoxToken(PubSub.subscribe(hash, subscriber.bind(this)))
 
-      if (options && isDirectQuery(options) && client) {
-        return requestAnimationFrame(() => makeRequest())
+      if (options && isDirectQuery(options, this.props) && client) {
+        requestAnimationFrame(() => makeRequest())
+
+        const { pollInterval } = getOptions(options, this.props)
+
+        if (pollInterval) {
+          updateNoxPollInterval(setInterval(() => makeRequest(), pollInterval))
+        }
       }
     },
     componentWillUnmount () {
       PubSub.unsubscribe(this.props.noxToken)
+      clearInterval(this.props.noxPollInterval)
     }
   })
 )(({ children, noxLoading, noxData, noxError, noxCached, bark, ...rest }) => (
   cloneElement(Children.only(children), {
-    ...rest,
+    ...omit(rest, OMITTED_NOX_FIELDS),
     noxData: { loading: noxLoading, data: noxData, error: noxError, cached: noxCached },
     bark
   }))
@@ -86,11 +98,11 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
 export default (Consumer) => (options) => (WrappedComponent) => {
   const NoxConnect = (props) => (
     <Consumer>
-    {({ client }) => (
-      <NoxWrapperComponent client={client} options={options} {...props}>
-        <WrappedComponent />
-      </NoxWrapperComponent>
-    )}
+      {({ client }) => (
+        <NoxWrapperComponent client={client} options={options} {...props}>
+          <WrappedComponent />
+        </NoxWrapperComponent>
+      )}
     </Consumer>
   )
 
