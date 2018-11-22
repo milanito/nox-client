@@ -6,6 +6,9 @@ Nox is a REST client for React. It is inspired from the apollo client, especiall
 
 > **Warning** : This is a very early WIP !
 
+## Background
+
+
 ## Installation
 
 To install the module, simply enter the following command :
@@ -38,9 +41,14 @@ export default () => (
 )
 ```
 
+#### Available options
+
 The provider accepts the following options :
 
 - `baseURL`: Your API base URL, with the scheme
+- `timeout`: Default timeout for request
+- `headers`: Default headers for the request
+- `cacheTimeout`: The time (in milleseconds) that the object should be keep in cache (Default 10 minutes)
 
 ### Components
 
@@ -86,11 +94,15 @@ The available options are :
 
 - `method` : The HTTP Verb to use, case unsensitive
 - `path` : The path to request
-- `cache` : A boolean to indicate to use cache or not (default to true)
+- `cache` : A boolean to indicate to use cache or not (default to `true`)
+- `subscribe` : Should the request subscrine to the response (default to `true`). Useful for not `GET` request
+- `headers` : The request headers
+- `pollInterval` : Should be pulled regularly
+- `cacheTimeout` : The specfic cache timeout for the request
 
 ### Accessing the client directly
 
-To access the REST client directly, you can wrap your component with the `withNoxClient` function, which will make the client accessible in the component's props
+To access the REST client directly, you can wrap your component with the `withNoxClient` function, which will make the client accessible in the component's props as `noxClient`
 
 ```
 import React from 'react'
@@ -108,10 +120,20 @@ class ComponentWithClient extends React.Component {
 export default withNoxClient(ComponentWithClient)
 ```
 
+## Who is Nox ?
+
+[Nox de Valvygne](http://www.pedigreedatabase.com/german_shepherd_dog/dog.html?id=2774601-nox-de-valvygne) is my german shepherd dog, he is used to come to the office, so this package is a little tribute for him
+
+![Nox in the office](public/nox_office.png?raw=true "Nox during working hours")
+
+
+## See also
+
+- [Axios](https://github.com/axios/axios)
+- [React Apollo](https://github.com/apollographql/react-apollo)
+
 ## TODO
 
-- Finish not GET queries
-- Handle composition
 - Make queries and params
 - Make tests
 - ...
