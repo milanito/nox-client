@@ -134,6 +134,5 @@ export default withNoxClient(ComponentWithClient)
 
 ## TODO
 
-- Make queries and params
 - Make tests
 - ...
