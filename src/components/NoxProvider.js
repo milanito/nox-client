@@ -23,6 +23,7 @@ export default (Provider) => compose(withState('error', 'modifyError', null),
   lifecycle({
     componentDidMount () {
       const { options, updateError, updateClient } = this.props
+
       const { error, value } = validate(options, providerOptionsSchema)
 
       if (error) {

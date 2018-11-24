@@ -7,7 +7,7 @@ import React, { Children, cloneElement } from 'react'
 import { OMITTED_NOX_FIELDS } from '../config/fields'
 import { isDirectQuery, hashOptions, getOptions } from '../utils'
 
-const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRequest', false),
+const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRequest', true),
   withState('noxLoading', 'modifyNoxLoading', false),
   withState('noxCached', 'modifyNoxCached', false),
   withState('noxData', 'modifyNoxData', null),
@@ -50,12 +50,18 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
           return updateNoxLoading(false)
       }
     },
+    barkAgain: ({ options, client, hash, ...props }) => () => {
+      if (options && isDirectQuery(options, props) && client) {
+        client.query(options, hash, { ...props })
+      }
+    },
     makeRequest: ({ client, options, hash, ...rest }) => async () =>
       client.query(options, hash, { ...rest }),
-    bark: ({ canMakeRequest, client, options, hash, ...rest }) => (opts) =>
-      canMakeRequest
+    bark: ({ canMakeRequest, client, options, hash, ...rest }) => (opts) => {
+      return !client || !canMakeRequest
         ? console.log('Whouf')
-        : client.request({ ...options, ...opts }, hash, { ...rest })
+        : client.request({ ...getOptions(options, rest), ...opts }, hash, { ...rest })
+    }
   }),
   lifecycle({
     shouldComponentUpdate (nextProps) {
@@ -87,16 +93,17 @@ const NoxWrapperComponent = compose(withState('canMakeRequest', 'modifyCanMakeRe
       clearInterval(this.props.noxPollInterval)
     }
   })
-)(({ children, noxLoading, noxData, noxError, noxCached, bark, ...rest }) => (
+)(({ children, noxLoading, noxData, noxError, noxCached, bark, barkAgain, ...rest }) => (
   cloneElement(Children.only(children), {
     ...omit(rest, OMITTED_NOX_FIELDS),
     noxData: { loading: noxLoading, data: noxData, error: noxError, cached: noxCached },
-    bark
+    bark,
+    barkAgain
   }))
 )
 
 export default (Consumer) => (options) => (WrappedComponent) => {
-  const NoxConnect = (props) => (
+  const NoxConnect = props => (
     <Consumer>
       {({ client }) => (
         <NoxWrapperComponent client={client} options={options} {...props}>

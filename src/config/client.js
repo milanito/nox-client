@@ -20,6 +20,7 @@ class NoxClient {
   }
 
   async request (options, hash, props) {
+    console.log('Calling request', getOptions(options, props))
     try {
       const validatedOptions = await validate(getOptions(options, props),
         connectOptionsSchema)
@@ -29,6 +30,7 @@ class NoxClient {
         type: 'onStart'
       })
 
+      console.log('options', fullOptions)
       const { data } = await this.client.request(fullOptions)
 
       if (fullOptions.subscribe) {
@@ -40,6 +42,7 @@ class NoxClient {
 
       return data
     } catch (error) {
+      console.log('ERROR', error)
       PubSub.publish(hash, {
         type: 'onError',
         data: { error }

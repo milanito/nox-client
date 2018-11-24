@@ -8,6 +8,7 @@ Nox is a REST client for React. It is inspired from the apollo client, especiall
 
 ## Background
 
+This package is inspired by [React Apollo](https://github.com/apollographql/react-apollo), because I found the usage quite nice in the front end, but I was using a REST API, I thought it'd be a good idea to do so ... As for the name, it's my dog's
 
 ## Installation
 
