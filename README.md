@@ -96,7 +96,7 @@ The available options are :
 - `method` : The HTTP Verb to use, case unsensitive
 - `path` : The path to request
 - `cache` : A boolean to indicate to use cache or not (default to `true`)
-- `subscribe` : Should the request subscrine to the response (default to `true`). Useful for not `GET` request
+- `subscribe` : Should the request subscribe to the response (default to `true`). Useful for not `GET` request
 - `headers` : The request headers
 - `pollInterval` : Should be pulled regularly
 - `cacheTimeout` : The specfic cache timeout for the request
