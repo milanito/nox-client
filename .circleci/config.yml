@@ -41,7 +41,7 @@ aliases:
       - dist
   - &restore_cache
     keys:
-      - yarn-nox-{{ .Branch }}-{{ checksum "api/yarn.lock" }}
+      - yarn-nox-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - yarn-nox-{{ .Branch }}
   - &attach_workspace
     at: /root/project
