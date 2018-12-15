@@ -1,6 +1,6 @@
 {
   "name": "nox-client",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "This is a rest client for react",
   "main": "dist/main.js",
   "files": [
