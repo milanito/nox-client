@@ -11,6 +11,11 @@ module.exports = {
   },
   target: 'node',
   externals: [nodeExternals()],
+  resolve: {
+    alias: {
+      joi: 'joi-browser'
+    }
+  },
   module: {
     rules: [{
       // // set up standard-loader as a preloader
