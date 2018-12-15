@@ -1,6 +1,6 @@
 {
   "name": "nox-client",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "This is a rest client for react",
   "main": "dist/main.js",
   "files": [
@@ -9,9 +9,46 @@
   "author": "Matthieu Rondeau <matt@matthieurondeau.fr>",
   "license": "MIT",
   "scripts": {
+    "doc": "echo 'to be done'",
+    "test": "jest",
     "lint": "./node_modules/.bin/standard \"src/**/*.{js,jsx}\"",
-    "build": "node_modules/webpack/bin/webpack.js --config webpack.config.js  --hot --colors",
-    "prepublish": "node_modules/webpack/bin/webpack.js --config webpack.config.js  --hot --colors"
+    "build": "node_modules/webpack/bin/webpack.js --config webpack.config.js --mode=development --hot --colors",
+    "prepublish": "node_modules/webpack/bin/webpack.js --config webpack.config.js --mode=production --hot --colors"
+  },
+  "jest": {
+    "verbose": true,
+    "transform": {
+      "^.+\\.js?$": "<rootDir>/__tests__/config/jest-transformer.js"
+    },
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "setupFiles": [
+      "./__tests__/config/setupTests.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "./__tests__/config"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov"
+    ]
+  },
+  "standard": {
+    "globals": [ "requestAnimationFrame" ]
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.49",
@@ -20,10 +57,17 @@
     "@babel/plugin-transform-runtime": "^7.0.0-beta.49",
     "@babel/preset-env": "^7.0.0-beta.49",
     "@babel/preset-react": "^7.0.0-beta.49",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.3",
+    "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.0-beta",
     "clean-webpack-plugin": "^0.1.19",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
+    "enzyme-to-json": "^3.3.5",
+    "jest-junit": "^5.2.0",
     "react": "^16.4.0",
+    "react-dom": "^16.6.3",
     "standard": "^11.0.1",
     "standard-loader": "^6.0.1",
     "webpack": "^4.10.2",
@@ -34,6 +78,7 @@
     "@babel/runtime": "^7.0.0-beta.49",
     "axios": "^0.18.0",
     "hoist-non-react-statics": "^2.5.0",
+    "jest": "^23.6.0",
     "joi": "^13.3.0",
     "lodash": "^4.17.10",
     "memory-cache": "^0.2.0",

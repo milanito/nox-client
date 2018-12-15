@@ -1,0 +1,129 @@
+version: 2
+
+docker_config: &docker_config
+  docker:
+    - image: circleci/node:10.7
+      user: root
+
+aliases:
+  - &install_machine_deps
+    name: Install build essential and yarn
+    command: apt-get install build-essential && npm i -g yarn && chmod +x /usr/local/bin/yarn
+  - &install_node_packages
+    name: Install node packages for Nox
+    command: yarn install
+  - &launch_tests
+    name: Launch Tests for Nox
+    command: yarn test --ci
+    environment:
+      JEST_JUNIT_OUTPUT: reports/junit/test-results.xml
+  - &launch_linter
+    name: Launch Linter for Nox
+    command: yarn lint
+  - &launch_doc
+    name: Launch doc generation for Nox
+    command: yarn doc
+  - &launch_build
+    name: Launch Nox build
+    command: yarn build
+  - &deploy_node_module
+    name: Deploy node module
+    command: yarn publish
+  - &save_cache
+    key: yarn-nox-{{ .Branch }}-{{ checksum "yarn.lock" }}
+    paths:
+      - "~/.npm"
+      - "~/.npmrc"
+      - "node_modules"
+  - &persist_workspace
+    root: /root/project
+    paths:
+      - dist
+  - &restore_cache
+    keys:
+      - yarn-nox-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      - yarn-nox-{{ .Branch }}
+  - &attach_workspace
+    at: /root/project
+  - &only_master
+    branches:
+      only:
+        - master
+  - &only_prod
+    branches:
+      only:
+        - prod
+
+jobs:
+  install:
+    <<: *docker_config
+    steps:
+      - checkout
+      - run: *install_machine_deps
+      - restore_cache: *restore_cache
+      - run: *install_node_packages
+      - save_cache: *save_cache
+  linter:
+    <<: *docker_config
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - run: *launch_linter
+  test:
+    <<: *docker_config
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - run: *launch_tests
+      - store_artifacts:
+          path: 'coverage'
+      - store_test_results:
+          path: 'reports'
+  doc:
+    <<: *docker_config
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - run: *launch_doc
+      - store_artifacts:
+          path: 'doc'
+  build:
+    <<: *docker_config
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - run: *launch_build
+      - persist_to_workspace: *persist_workspace
+  deploy:
+    <<: *docker_config
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - attach_workspace: *attach_workspace
+      # - run: *deploy_node_module
+
+workflows:
+  version: 2
+  full_workflow:
+    jobs:
+      - install
+      - linter:
+          requires:
+            - install
+      - test:
+          requires:
+            - install
+      - doc:
+          requires:
+            - test
+            - linter
+          filters: *only_master
+      - build:
+          requires:
+            - test
+            - linter
+          filters: *only_master
+      - deploy:
+          requires:
+            - build
+          filters: *only_master
