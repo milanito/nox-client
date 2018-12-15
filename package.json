@@ -47,6 +47,9 @@
       "lcov"
     ]
   },
+  "standard": {
+    "globals": [ "requestAnimationFrame" ]
+  },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.49",
     "@babel/core": "^7.0.0-beta.49",
