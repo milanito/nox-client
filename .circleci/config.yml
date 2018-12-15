@@ -17,6 +17,9 @@ aliases:
     command: yarn test --ci
     environment:
       JEST_JUNIT_OUTPUT: reports/junit/test-results.xml
+  - &launch_coveralls_upload
+      name: Uploads test results to coveralls
+      command: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - &launch_linter
     name: Launch Linter for Nox
     command: yarn lint
@@ -75,6 +78,7 @@ jobs:
       - checkout
       - restore_cache: *restore_cache
       - run: *launch_tests
+      - run: *launch_coveralls_upload
       - store_artifacts:
           path: 'coverage'
       - store_test_results:
