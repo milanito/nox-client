@@ -44,11 +44,14 @@
     ],
     "coverageReporters": [
       "json",
+      "text-lcov",
       "lcov"
     ]
   },
   "standard": {
-    "globals": [ "requestAnimationFrame" ]
+    "globals": [
+      "requestAnimationFrame"
+    ]
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.49",
@@ -62,6 +65,7 @@
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.0-beta",
     "clean-webpack-plugin": "^1.0.0",
+    "coveralls": "^3.0.2",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "enzyme-to-json": "^3.3.5",
