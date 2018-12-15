@@ -1,6 +1,6 @@
 # Nox Client
 
-[![NPM](https://nodei.co/npm/nox-client.png)](https://nodei.co/npm/nox-client/) [![CircleCI](https://circleci.com/gh/milanito/nox-client.svg?style=svg&circle-token=b8d9b4420fee14829c6e21bc1ec198fc8dfb14e8)](https://circleci.com/gh/milanito/nox-client) [![Coverage Status](https://coveralls.io/repos/github/milanito/nox-client/badge.svg?branch=master)](https://coveralls.io/github/milanito/nox-client?branch=master)
+[![NPM](https://nodei.co/npm/nox-client.png)](https://nodei.co/npm/nox-client/) [![Greenkeeper badge](https://badges.greenkeeper.io/milanito/nox-client.svg)](https://greenkeeper.io/ ) [![CircleCI](https://circleci.com/gh/milanito/nox-client.svg?style=svg&circle-token=b8d9b4420fee14829c6e21bc1ec198fc8dfb14e8)](https://circleci.com/gh/milanito/nox-client) [![Coverage Status](https://coveralls.io/repos/github/milanito/nox-client/badge.svg?branch=master)](https://coveralls.io/github/milanito/nox-client?branch=master)
 
 ## Description
 
