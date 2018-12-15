@@ -1,5 +1,7 @@
 # Nox Client
 
+[![NPM](https://nodei.co/npm/nox-client.png)](https://nodei.co/npm/nox-client/) [![CircleCI](https://circleci.com/gh/milanito/nox-client.svg?style=svg&circle-token=b8d9b4420fee14829c6e21bc1ec198fc8dfb14e8)](https://circleci.com/gh/milanito/nox-client)
+
 ## Description
 
 Nox is a REST client for React. It is inspired from the apollo client, especially in its usage
