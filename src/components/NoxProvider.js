@@ -1,5 +1,5 @@
 import React, { Children } from 'react'
-import { validate } from 'joi'
+import { validate } from 'joi-browser'
 import {
   compose, withState, lifecycle, branch, renderComponent, withHandlers
 } from 'recompose'

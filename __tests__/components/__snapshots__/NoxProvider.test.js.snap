@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NoxProvider test cases NoxProvider success cases should render correctly 1`] = `
+<withState(withState(withHandlers(lifecycle(branch(Component)))))
+  options={
+    Object {
+      "baseURL": "http://google.com",
+    }
+  }
+>
+  <withState(withHandlers(lifecycle(branch(Component))))
+    error={null}
+    modifyError={[Function]}
+    options={
+      Object {
+        "baseURL": "http://google.com",
+      }
+    }
+  >
+    <withHandlers(lifecycle(branch(Component)))
+      client={
+        NoxClient {
+          "cache": Cache {
+            "clear": [Function],
+            "debug": [Function],
+            "del": [Function],
+            "exportJson": [Function],
+            "get": [Function],
+            "hits": [Function],
+            "importJson": [Function],
+            "keys": [Function],
+            "memsize": [Function],
+            "misses": [Function],
+            "put": [Function],
+            "size": [Function],
+          },
+          "cacheTimeout": 600000,
+          "client": [Function],
+        }
+      }
+      error={null}
+      modifyClient={[Function]}
+      modifyError={[Function]}
+      options={
+        Object {
+          "baseURL": "http://google.com",
+        }
+      }
+    >
+      <lifecycle(branch(Component))
+        client={
+          NoxClient {
+            "cache": Cache {
+              "clear": [Function],
+              "debug": [Function],
+              "del": [Function],
+              "exportJson": [Function],
+              "get": [Function],
+              "hits": [Function],
+              "importJson": [Function],
+              "keys": [Function],
+              "memsize": [Function],
+              "misses": [Function],
+              "put": [Function],
+              "size": [Function],
+            },
+            "cacheTimeout": 600000,
+            "client": [Function],
+          }
+        }
+        error={null}
+        modifyClient={[Function]}
+        modifyError={[Function]}
+        options={
+          Object {
+            "baseURL": "http://google.com",
+          }
+        }
+        updateClient={[Function]}
+        updateError={[Function]}
+      >
+        <branch(Component)
+          client={
+            NoxClient {
+              "cache": Cache {
+                "clear": [Function],
+                "debug": [Function],
+                "del": [Function],
+                "exportJson": [Function],
+                "get": [Function],
+                "hits": [Function],
+                "importJson": [Function],
+                "keys": [Function],
+                "memsize": [Function],
+                "misses": [Function],
+                "put": [Function],
+                "size": [Function],
+              },
+              "cacheTimeout": 600000,
+              "client": [Function],
+            }
+          }
+          error={null}
+          modifyClient={[Function]}
+          modifyError={[Function]}
+          options={
+            Object {
+              "baseURL": "http://google.com",
+            }
+          }
+          updateClient={[Function]}
+          updateError={[Function]}
+        >
+          <Component
+            client={
+              NoxClient {
+                "cache": Cache {
+                  "clear": [Function],
+                  "debug": [Function],
+                  "del": [Function],
+                  "exportJson": [Function],
+                  "get": [Function],
+                  "hits": [Function],
+                  "importJson": [Function],
+                  "keys": [Function],
+                  "memsize": [Function],
+                  "misses": [Function],
+                  "put": [Function],
+                  "size": [Function],
+                },
+                "cacheTimeout": 600000,
+                "client": [Function],
+              }
+            }
+            error={null}
+            modifyClient={[Function]}
+            modifyError={[Function]}
+            options={
+              Object {
+                "baseURL": "http://google.com",
+              }
+            }
+            updateClient={[Function]}
+            updateError={[Function]}
+          >
+            <div
+              className="unique"
+            />
+          </Component>
+        </branch(Component)>
+      </lifecycle(branch(Component))>
+    </withHandlers(lifecycle(branch(Component)))>
+  </withState(withHandlers(lifecycle(branch(Component))))>
+</withState(withState(withHandlers(lifecycle(branch(Component)))))>
+`;
