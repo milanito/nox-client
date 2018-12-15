@@ -1,17 +1,16 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import { NoxProvider } from '../../src'
+import { noxConnect } from '../../src'
 
-console.log(NoxProvider)
 
-it('should require options', () => {
+it('should render wrapped component', () => {
   const wrapper = shallow(
-    <NoxProvider>
+    <noxConnect>
       <div className='unique' />
-    </NoxProvider>
+    </noxConnect>
   )
 
-  console.log(wrapper)
   expect(wrapper.contains(<div className='unique' />)).toBeTruthy()
 })
+
