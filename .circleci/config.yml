@@ -29,9 +29,12 @@ aliases:
   - &launch_build
     name: Launch Nox build
     command: yarn build
+  - &launch_npm_auth
+    name: Authenticate with npm
+    command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
   - &deploy_node_module
     name: Deploy node module
-    command: yarn publish
+    command: npm publish
   - &save_cache
     key: yarn-nox-{{ .Branch }}-{{ checksum "yarn.lock" }}
     paths:
@@ -56,6 +59,11 @@ aliases:
     branches:
       only:
         - prod
+  - &tag_commit
+    tags:
+      only: /^v.*/
+    branches:
+      ignore: /.*/
 
 jobs:
   install:
@@ -104,7 +112,8 @@ jobs:
       - checkout
       - restore_cache: *restore_cache
       - attach_workspace: *attach_workspace
-      # - run: *deploy_node_module
+      - run: *launch_npm_auth
+      - run: *deploy_node_module
 
 workflows:
   version: 2
@@ -126,8 +135,8 @@ workflows:
           requires:
             - test
             - linter
-          filters: *only_master
+          filters: *tag_commit
       - deploy:
           requires:
             - build
-          filters: *only_master
+          filters: *tag_commit
