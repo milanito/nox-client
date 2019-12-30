@@ -72,7 +72,7 @@
     "jest-junit": "^5.2.0",
     "react": "^16.4.0",
     "react-dom": "^16.6.3",
-    "sinon": "^7.2.2",
+    "sinon": "^8.0.2",
     "standard": "^12.0.1",
     "standard-loader": "^6.0.1",
     "webpack": "^4.10.2",
