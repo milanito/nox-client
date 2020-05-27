@@ -80,7 +80,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.49",
+    "@babel/runtime": "^7.10.1",
     "axios": "^0.18.0",
     "hoist-non-react-statics": "^3.2.1",
     "joi": "^14.3.0",
